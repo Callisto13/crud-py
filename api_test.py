@@ -32,42 +32,42 @@ class TestAPI():
 
     def test_post_create(self):
         content_header = {'Content-Type': 'application/json'}
-        data = {'name': 'test-file', 'contents':'hello'}
+        data = {'name': 'test-file-to-create', 'contents':'hello'}
         r = requests.post(self.url+"/files/create", headers=content_header, json=data)
 
         assert r.status_code == 201
-        assert r.text == "File 'test-file' created at '"+self.tmp+"'."
-
-        file_object = open(self.tmp+"/test-file", "r")
-        read_content = file_object.read()
-        file_object.close()
+        assert r.text == "File 'test-file-to-create' created at '"+self.tmp+"'."
+        read_content = read_file(self.tmp+"/test-file-to-create")
         assert read_content == "hello"
 
     def test_get_read(self):
         expected_contents = "contents of the test file"
-        file_object = open(self.tmp+'/test-file', "w")
-        file_object.write(expected_contents)
-        file_object.close()
+        write_file(self.tmp+'/test-file-to-read', expected_contents)
+        r = requests.get(self.url+"/files/read/test-file-to-read")
 
-        r = requests.get(self.url+"/files/read/test-file")
         assert r.status_code == 200
         assert r.text == expected_contents
 
     def test_put_update(self):
-        f = open(self.tmp+'/test-file', "w")
-        f.write('boring old contents')
-        f.close()
-
+        write_file(self.tmp+'/test-file-to-update', 'boring old contents')
         expected_new_contents = 'new shiny updated contents'
-
         content_header = {'Content-Type': 'application/json'}
         data = {'contents': expected_new_contents}
-        r = requests.put(self.url+"/files/update/test-file", headers=content_header, json=data)
+        r = requests.put(self.url+"/files/update/test-file-to-update", headers=content_header, json=data)
 
         assert r.status_code == 200
-        assert r.text == "File 'test-file' in '"+self.tmp+"' updated."
-
-        file_object = open(self.tmp+"/test-file", "r")
-        read_content = file_object.read()
-        file_object.close()
+        assert r.text == "File 'test-file-to-update' in '"+self.tmp+"' updated."
+        read_content = read_file(self.tmp+"/test-file-to-update")
         assert read_content == expected_new_contents
+
+def write_file(filename, contents):
+    f = open(filename, "w")
+    f.write(contents)
+    f.close()
+
+def read_file(filename):
+    f = open(filename, "r")
+    contents = f.read()
+    f.close()
+    return contents
+
