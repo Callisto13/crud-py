@@ -3,6 +3,7 @@ import pexpect
 import tempfile
 import shutil
 import sys
+import os.path
 
 import pytest
 
@@ -59,6 +60,14 @@ class TestAPI():
         assert r.text == "File 'test-file-to-update' in '"+self.tmp+"' updated."
         read_content = read_file(self.tmp+"/test-file-to-update")
         assert read_content == expected_new_contents
+
+    def test_delete_delete(self):
+        write_file(self.tmp+'/test-file-to-delete', 'goodbye')
+        r = requests.delete(self.url+"/files/delete/test-file-to-delete")
+
+        assert r.status_code == 200
+        assert r.text == "File 'test-file-to-delete' deleted from '"+self.tmp+"'."
+        assert os.path.exists(self.tmp+'/test-file-to-delete') == False
 
 def write_file(filename, contents):
     f = open(filename, "w")
