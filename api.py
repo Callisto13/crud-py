@@ -21,5 +21,13 @@ def create():
 
     return "File '{}' created at '{}'.".format(name, store), 201
 
+@app.route('/files/read/<filename>')
+def read(filename):
+    f = open(store+'/'+filename, "r")
+    contents = f.read()
+    f.close()
+
+    return contents
+
 
 app.run(debug=True)
