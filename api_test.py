@@ -52,3 +52,22 @@ class TestAPI():
         r = requests.get(self.url+"/files/read/test-file")
         assert r.status_code == 200
         assert r.text == expected_contents
+
+    def test_put_update(self):
+        f = open(self.tmp+'/test-file', "w")
+        f.write('boring old contents')
+        f.close()
+
+        expected_new_contents = 'new shiny updated contents'
+
+        content_header = {'Content-Type': 'application/json'}
+        data = {'contents': expected_new_contents}
+        r = requests.put(self.url+"/files/update/test-file", headers=content_header, json=data)
+
+        assert r.status_code == 200
+        assert r.text == "File 'test-file' in '"+self.tmp+"' updated."
+
+        file_object = open(self.tmp+"/test-file", "r")
+        read_content = file_object.read()
+        file_object.close()
+        assert read_content == expected_new_contents

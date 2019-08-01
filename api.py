@@ -29,5 +29,15 @@ def read(filename):
 
     return contents
 
+@app.route('/files/update/<filename>', methods=['PUT'])
+def update(filename):
+    data = request.get_json()
+    contents = data['contents']
+
+    f = open(store+'/'+filename, "w")
+    f.write(contents)
+    f.close()
+
+    return "File '{}' in '{}' updated.".format(filename, store)
 
 app.run(debug=True)
