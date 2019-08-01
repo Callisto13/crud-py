@@ -22,6 +22,15 @@ def create():
 
     return "File '{}' created at '{}'.".format(name, store), 201
 
+@app.route('/files/read')
+def list():
+    files = os.listdir(store)
+
+    if len(files) == 0:
+        return "No files found in {}".format(store)
+
+    return '\n'.join(sorted(files))
+
 @app.route('/files/read/<filename>')
 def read(filename):
     f = open(store+'/'+filename, "r")

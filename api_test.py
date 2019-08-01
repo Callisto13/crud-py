@@ -69,6 +69,20 @@ class TestAPI():
         assert r.text == "File 'test-file-to-delete' deleted from '"+self.tmp+"'."
         assert os.path.exists(self.tmp+'/test-file-to-delete') == False
 
+    def test_list_files(self):
+        write_file(self.tmp+'/test-file-1', "kitten")
+        write_file(self.tmp+'/test-file-2', "puppy")
+        r = requests.get(self.url+"/files/read")
+
+        assert r.status_code == 200
+        assert r.text == "test-file-1\ntest-file-2"
+
+    def test_list_empty(self):
+        r = requests.get(self.url+"/files/read")
+
+        assert r.status_code == 200
+        assert r.text == "No files found in "+self.tmp
+
 def write_file(filename, contents):
     f = open(filename, "w")
     f.write(contents)
