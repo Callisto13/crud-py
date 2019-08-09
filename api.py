@@ -4,8 +4,14 @@ import os
 
 app = Flask(__name__)
 
-app.config['store'] = sys.argv[1]
-store = app.config.get('store')
+def process_configuration():
+    app.config['store'] = sys.argv[1]
+    store = app.config.get('store')
+
+    if not os.path.isdir(store):
+        sys.exit("The provided store configuration (`{}`) is not an existing directory.".format(store))
+
+    return store
 
 @app.route('/')
 def index():
@@ -55,4 +61,5 @@ def delete(filename):
     os.remove(store+'/'+filename)
     return "File '{}' deleted from '{}'.".format(filename, store)
 
+store = process_configuration()
 app.run(debug=True)
