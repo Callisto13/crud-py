@@ -40,11 +40,14 @@ def list():
 
 @app.route('/files/read/<filename>')
 def read(filename):
-    f = open(store+'/'+filename, "r")
-    contents = f.read()
-    f.close()
-
-    return contents
+    full_path = store+'/'+filename
+    if os.path.exists(full_path):
+        f = open(store+'/'+filename, "r")
+        contents = f.read()
+        f.close()
+        return contents
+    else:
+        return "File '{}' not found in '{}'.".format(filename, store), 404
 
 @app.route('/files/update/<filename>', methods=['PUT'])
 def update(filename):

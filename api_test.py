@@ -61,6 +61,12 @@ class TestAPI():
         assert r.status_code == 200
         assert r.text == expected_contents
 
+    def test_get_read_fails_when_file_does_not_exist(self):
+        r = requests.get(self.url+"/files/read/test-file-to-read")
+
+        assert r.status_code == 404
+        assert r.text == "File 'test-file-to-read' not found in '"+self.tmp+"'."
+
     def test_put_update(self):
         write_file(self.tmp+'/test-file-to-update', 'boring old contents')
         expected_new_contents = 'new shiny updated contents'
