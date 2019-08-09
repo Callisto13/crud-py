@@ -51,11 +51,12 @@ def update(filename):
     data = request.get_json()
     contents = data['contents']
 
-    f = open(store+'/'+filename, "w")
-    f.write(contents)
-    f.close()
-
-    return "File '{}' in '{}' updated.".format(filename, store)
+    full_path = store+'/'+filename
+    if os.path.exists(full_path):
+        write_file(full_path, contents)
+        return "File '{}' in '{}' updated.".format(filename, store)
+    else:
+        return "File '{}' not found in '{}'.".format(filename, store), 404
 
 @app.route('/files/delete/<filename>', methods=['DELETE'])
 def delete(filename):

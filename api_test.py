@@ -73,6 +73,14 @@ class TestAPI():
         read_content = read_file(self.tmp+"/test-file-to-update")
         assert read_content == expected_new_contents
 
+    def test_put_update_failure_when_file_does_not_exist(self):
+        content_header = {'Content-Type': 'application/json'}
+        data = {'contents': 'new contents, will not be written'}
+        r = requests.put(self.url+"/files/update/test-file-to-update", headers=content_header, json=data)
+
+        assert r.status_code == 404
+        assert r.text == "File 'test-file-to-update' not found in '"+self.tmp+"'."
+
     def test_delete_delete(self):
         write_file(self.tmp+'/test-file-to-delete', 'goodbye')
         r = requests.delete(self.url+"/files/delete/test-file-to-delete")
