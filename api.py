@@ -7,7 +7,30 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "welcome home"
+    return """
+Actions:
+
+POST /files/create
+    data: name, contents
+    description: create a file with desired contents
+
+GET /files/read
+    data: none
+    description: read all files stored by the service
+
+GET /files/read/<filename>
+    data: none
+    description: read a named file
+
+PUT /files/update/<filename>
+    data: contents
+    description: update a named file
+
+DELETE /files/delete/<filename>
+    data: none
+    description: delete a named file
+
+    """
 
 @app.route('/files/create', methods=['POST'])
 def create():

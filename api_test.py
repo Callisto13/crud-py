@@ -34,6 +34,7 @@ class TestAPI():
     def test_index(self):
         r = requests.get(self.url)
         assert r.status_code == 200
+        assert "Actions:" in r.text
 
 
 # create
