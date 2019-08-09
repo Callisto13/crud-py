@@ -89,6 +89,12 @@ class TestAPI():
         assert r.text == "File 'test-file-to-delete' deleted from '"+self.tmp+"'."
         assert os.path.exists(self.tmp+'/test-file-to-delete') == False
 
+    def test_delete_delete_fails_when_file_does_not_exist(self):
+        r = requests.delete(self.url+"/files/delete/test-file-to-delete")
+
+        assert r.status_code == 404
+        assert r.text == "File 'test-file-to-delete' not found in '"+self.tmp+"'."
+
     def test_list_files(self):
         write_file(self.tmp+'/test-file-1', "kitten")
         write_file(self.tmp+'/test-file-2', "puppy")

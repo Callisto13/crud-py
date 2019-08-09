@@ -60,8 +60,12 @@ def update(filename):
 
 @app.route('/files/delete/<filename>', methods=['DELETE'])
 def delete(filename):
-    os.remove(store+'/'+filename)
-    return "File '{}' deleted from '{}'.".format(filename, store)
+    full_path = store+'/'+filename
+    if os.path.exists(full_path):
+        os.remove(full_path)
+        return "File '{}' deleted from '{}'.".format(filename, store)
+    else:
+        return "File '{}' not found in '{}'.".format(filename, store), 404
 
 def write_file(filename, contents):
     f = open(filename, "w")
