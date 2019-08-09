@@ -41,6 +41,18 @@ class TestAPI():
         read_content = read_file(self.tmp+"/test-file-to-create")
         assert read_content == "hello"
 
+    def test_post_create_failure_when_file_already_exists(self):
+        expected_contents = 'original contents, will not be overwritten'
+        write_file(self.tmp+'/test-file-to-create', expected_contents)
+        content_header = {'Content-Type': 'application/json'}
+        data = {'name': 'test-file-to-create', 'contents':'try to overwrite'}
+        r = requests.post(self.url+"/files/create", headers=content_header, json=data)
+
+        assert r.status_code == 409
+        assert r.text == "File 'test-file-to-create' already exists in '"+self.tmp+"'."
+        read_content = read_file(self.tmp+"/test-file-to-create")
+        assert read_content == expected_contents
+
     def test_get_read(self):
         expected_contents = "contents of the test file"
         write_file(self.tmp+'/test-file-to-read', expected_contents)

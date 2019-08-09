@@ -22,11 +22,12 @@ def create():
     data = request.get_json()
     name, contents = data['name'], data['contents']
 
-    f = open(store+'/'+name, "w")
-    f.write(contents)
-    f.close()
-
-    return "File '{}' created at '{}'.".format(name, store), 201
+    full_path = store+'/'+name
+    if not os.path.exists(full_path):
+        write_file(full_path, contents)
+        return "File '{}' created at '{}'.".format(name, store), 201
+    else:
+        return "File '{}' already exists in '{}'.".format(name, store), 409
 
 @app.route('/files/read')
 def list():
@@ -60,6 +61,11 @@ def update(filename):
 def delete(filename):
     os.remove(store+'/'+filename)
     return "File '{}' deleted from '{}'.".format(filename, store)
+
+def write_file(filename, contents):
+    f = open(filename, "w")
+    f.write(contents)
+    f.close()
 
 store = process_configuration()
 app.run(debug=True)
